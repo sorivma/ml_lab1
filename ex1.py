@@ -1,7 +1,8 @@
 import matplotlib.pyplot as plt
 from plotData import plot_data
 from computeCost import compute_cost
-from gradientDescent import gradient_descent
+from gradientDescent import gradient_descent, gradient_descent_vector
+from plotCostFunction import plot_cost_surface
 import json
 
 
@@ -29,18 +30,18 @@ def main():
     X_with_ones = [[1, x] for x in X]
 
     # Инициализируем параметры
-    theta = [0, 0]
+    theta = [10, 15]
 
     # Параметры для градиентного спуска
     alpha = 0.01
-    iterations = 1500
+    iterations = 15000
     
     # Вычисляем начальную стоимость
     cost = compute_cost(X_with_ones, y, theta)
     print(f'Initial cost: {cost}')
     
     # Запуск градиентного спуска
-    theta, cost_history = gradient_descent(X_with_ones, y, theta, alpha, iterations)
+    theta, cost_history, theta_history = gradient_descent_vector(X_with_ones, y, theta, alpha, iterations)
 
     print(f'Optimized theta: {theta}')
     
@@ -49,7 +50,7 @@ def main():
     plt.plot(X, [theta[0] + theta[1] * x for x in X], label='Linear regression')
     plt.scatter(X, y, marker='x', c='red', label='Training data')
     plt.legend()
-    plt.title('Linear Regression Fit')
+    plt.title('Линейная регрессия')
     plt.xlabel('Количество автомобилей')
     plt.ylabel('Прибыль СТО')
     plt.grid(True)
@@ -61,10 +62,13 @@ def main():
     plt.ylabel('Cost')
     plt.title('Cost Function History')
     plt.grid(True)
-    plt.show()
+
+    plot_cost_surface(X_with_ones, y, theta_history, cost_history)
 
     # Сохраняем параметры theta в файл
     save_theta_to_file(theta, filename="data/theta.json")
+
+    plt.show()
 
 if __name__ == '__main__':
     main()
